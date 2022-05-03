@@ -1,4 +1,5 @@
 import time
+from sort_util import is_sorted
 
 
 class sorting_algorithm:
@@ -22,11 +23,8 @@ class sorting_algorithm:
         self.times.append(tf-t0)
         
     def verify_sorted(self,lst):
-        return all([lst[i]<=lst[i+1] for i in range(len(lst)-1)])
+        return is_sorted(lst)
     
-
-
-
 
 if __name__ == '__main__':
     from sorting_algs import default_sort

@@ -29,7 +29,6 @@ def quick_sort(lst):
     uses last element of list as pivot, puts everything smaller to the left,
     puts everything greater to the right, and continues recursively
     '''
-    
     def partition(lst, x, y, comparisons):
         i = x-1
         pivot = lst[y]
@@ -41,7 +40,6 @@ def quick_sort(lst):
         swap(lst,i+1,y)
         return i + 1
     def qsort(lst,x,y, comparisons):
-        comparisons[0] += 1
         if x < y:
             i = partition(lst,x,y, comparisons)
             qsort(lst,x,i-1, comparisons)
@@ -50,7 +48,37 @@ def quick_sort(lst):
     qsort(lst,0,len(lst)-1, comparisons)
     return comparisons[0]
 
-    
+def merge_sort(lst):
+    '''
+    This merge sort is worse than regular merge sort because it uses
+    '''
+    def msort(lst, comparisons):
+        if len(lst) > 1:
+            mid = len(lst) // 2
+            
+            left = lst[:mid] # full copy of left side
+            right = lst[mid:] #full copy of right side
+            msort(left, comparisons)
+            msort(right, comparisons)
+            
+            l_i = r_i = 0
+            len_left = len(left)
+            len_right = len(right)
+            while l_i < len_left and r_i < len_right:
+                comparisons[0] += 1
+                if left[l_i] < right[r_i]:
+                    lst[l_i + r_i] = left[l_i]
+                    l_i += 1
+                else:
+                    lst[l_i + r_i] = right[r_i]
+                    r_i += 1
+            if l_i != len_left:
+                lst[l_i + r_i:] = left[l_i:]
+            elif r_i != len_right:
+                lst[l_i + r_i:] = right[r_i:]
+    comparisons = [0]
+    msort(lst, comparisons)
+    return comparisons[0]
 
 
 if __name__ == '__main__':
@@ -58,8 +86,8 @@ if __name__ == '__main__':
     lengths = []
     comparisons = []
     for length in range(1,50):
-        x = get_random_integers(stop = 1000000, size=length)
-        comp = quick_sort(x)
+        x = list(get_random_integers(stop = 10**4, size=length))
+        comp = merge_sort(x)
         if not is_sorted(x):
             raise ValueError
         lengths.append(length)

@@ -7,6 +7,7 @@ Created on Fri May  6 14:00:00 2022
 """
 import random
 import numpy as np
+import time
 
 from sorting_obj import sorting_obj
 from sorting_algs import default_sort, quick_sort, merge_sort, radix_sort, alg_names
@@ -23,19 +24,27 @@ def run_exp(sort_objs, length_range, endpoints):
     random.shuffle(jobs)
     for obj, lst, k in jobs:
         print(obj.name, k, len(lst))
-        algorithm_,N_,comparisons_,time_,entry_time_ = (str(val) for val in obj.run_exp(lst))
+        try:
+            algorithm_,N_,comparisons_,time_,entry_time_ = (str(val) for val in obj.run_exp(lst))
+        except RecursionError:
+            algorithm_,N_,comparisons_,time_,entry_time_ = (str(val) for val in [obj.name,len(lst),0,0,time.time()])
+            print(f'Failure due to recursion limit: {algorithm_}, {N_}, {k}')
         newline = ','.join((algorithm_,N_,k,comparisons_,time_,entry_time_))
-        with open('data/results.csv', 'a') as file:
-            file.write(newline + '\n')
+        if comparisons_ == '0' and time_ == '0':
+            with open('data/failed_results.csv', 'a') as file:
+                file.write(newline + '\n')
+        else:
+            with open('data/results.csv', 'a') as file:
+                file.write(newline + '\n')
 
 
 if __name__ == '__main__':
     sorting_obj_dict = {name:sorting_obj(name) for name in alg_names}
-    #sorting_obj_dict.pop('default_sort')
-    #sorting_obj_dict.pop('insertion_sort')
+    sorting_obj_dict.pop('default_sort')
+    sorting_obj_dict.pop('insertion_sort')
     sorting_objs = [sorting_obj_dict[name] for name in sorting_obj_dict.keys()]
-    ranges = [int(val) for val in np.geomspace(100,10**4,10)]
-    ks = (10**2,10**3, 10**6)
+    ranges = [int(val) for val in np.geomspace(100,10**5,10)]
+    ks = (10, 10**2)
     run_exp(sorting_objs, ranges, ks)
 
 

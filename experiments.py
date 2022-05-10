@@ -43,8 +43,8 @@ if __name__ == '__main__':
     sorting_obj_dict.pop('default_sort')
     sorting_obj_dict.pop('insertion_sort')
     sorting_objs = [sorting_obj_dict[name] for name in sorting_obj_dict.keys()]
-    ranges = [int(val) for val in np.geomspace(100,10**5,10)]
-    ks = (10, 10**2)
+    ranges = [int(val) for val in np.geomspace(100,10**6,285)]
+    ks = [val-1 for val in (10, 10**2, 10**3, 10**5, 10**7)] + [4*val for val in (10, 10**2, 10**3, 10**5, 10**7)]
     run_exp(sorting_objs, ranges, ks)
 
 

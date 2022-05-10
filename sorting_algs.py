@@ -1,4 +1,6 @@
 from sort_util import swap, get_random_integers, is_sorted
+from math import log10
+
 
 def default_sort(lst):
     lst.sort()
@@ -79,6 +81,50 @@ def merge_sort(lst):
     comparisons = [0]
     msort(lst, comparisons)
     return comparisons[0]
+    
+def radix_sort(lst):
+    operations = [0]
+    L = len(lst)
+    
+    digit_map = {i:[] for i in range(10)}
+    lst_map = [lst, lst.copy()]
+    M = -float('inf')
+    for i in range(L):
+        if M < lst[i]:
+            M = lst[i]
+        operations[0] += 1
+        digit_map[lst[i]//1%10].append(i)
+    # copy
+    ind = 0
+    for i in range(10):
+        for j in digit_map[i]:
+            lst_map[1][ind] = lst[j]
+            ind += 1
+    # calc number of steps left
+    num_powers = int(log10(M)//1) + 1
+    
+    for p in range(1,num_powers):
+        digit_map = {i:[] for i in range(10)}
+        mod2 = p%2
+        for i in range(L):
+            operations[0] += 1
+            digit_map[lst_map[mod2][i]//(10**p)%10].append(i)
+        # copy
+        ind = 0
+        for i in range(10):
+            for j in digit_map[i]:
+                lst_map[1-mod2][ind] = lst_map[mod2][j]
+                ind += 1
+    
+    # copy
+    if num_powers % 2 == 1:
+        for i in range(L):
+            lst[i] = lst_map[1][i]
+    return operations[0]
+    
+
+algs = [default_sort, insertion_sort, quick_sort, merge_sort, radix_sort]
+alg_names = [f.__name__ for f in algs]
 
 
 if __name__ == '__main__':

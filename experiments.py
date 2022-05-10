@@ -45,29 +45,55 @@ def run_random_exps(sort_objs,length_range, endpoints):
                 jobs.append((obj, L, str(end)))
     random.shuffle(jobs)
     for obj, L, k in jobs:
-        lst = get_random_integers(start=0, stop=k, size=L)
         print(obj.name, k, L)
-        try:
-            algorithm_,N_,comparisons_,time_,entry_time_ = (str(val) for val in obj.run_exp(lst))
-        except RecursionError:
-            algorithm_,N_,comparisons_,time_,entry_time_ = (str(val) for val in [obj.name,len(lst),0,0,time.time()])
-            print(f'Failure due to recursion limit: {algorithm_}, {N_}, {k}')
-        newline = ','.join((algorithm_,N_,k,comparisons_,time_,entry_time_))
-        if comparisons_ == '0' and time_ == '0':
-            with open('data/failed_results.csv', 'a') as file:
-                file.write(newline + '\n')
-        else:
-            with open('data/results.csv', 'a') as file:
-                file.write(newline + '\n')
+        run_single_exp(obj,L,k)
+        
+def run_single_exp(obj, L, k):
+    lst = get_random_integers(start=0, stop=k, size=L)
+    try:
+        algorithm_,N_,comparisons_,time_,entry_time_ = (str(val) for val in obj.run_exp(lst))
+        out = True
+    except RecursionError:
+        algorithm_,N_,comparisons_,time_,entry_time_ = (str(val) for val in [obj.name,len(lst),0,0,time.time()])
+        out = False
 
+    newline = ','.join((algorithm_,N_,str(k),comparisons_,time_,entry_time_))
+    if comparisons_ == '0' and time_ == '0':
+        with open('data/failed_results.csv', 'a') as file:
+            file.write(newline + '\n')
+    else:
+        with open('data/results.csv', 'a') as file:
+            file.write(newline + '\n')
+    return out
+
+def traverse_qsort_failure_boundary(min_N, max_N, min_k, max_k):
+    # if N is too large and k is too small, it will fail. 
+    sort_obj = sorting_obj('quick_sort')
+    N_factor = min_N
+    k_factor = min_k
+    while N_factor < max_N and k_factor < max_k:
+        #increase N until an exception, then increase k. 
+        print(f'{N_factor},\t{k_factor}')
+        if run_single_exp(sort_obj, int(N_factor), int(k_factor)):
+            # if no failure, just increase N
+            N_factor *= 1.05
+        else: # if there was a failure, increase k
+            # but first run some more experiments
+            for multiplier in [.7, .8, .9, 1.1, 1.2]:
+                run_single_exp(sort_obj,int(N_factor*multiplier), int(k_factor))
+            k_factor *= 1.05
+    print('was N to large? (if not then k was too large.)')
+    print(N_factor < max_N)
 
 if __name__ == '__main__':
-    sorting_obj_dict = {name:sorting_obj(name) for name in alg_names}
+    '''sorting_obj_dict = {name:sorting_obj(name) for name in alg_names}
     sorting_obj_dict.pop('default_sort')
     sorting_obj_dict.pop('insertion_sort')
     sorting_objs = [sorting_obj('quick_sort')]#[sorting_obj_dict[name] for name in sorting_obj_dict.keys()]
-    ranges = [int(val) for val in np.geomspace(100,10**6,285)]
-    ks = [int(val) for val in np.geomspace(4,1000,100)]
-    run_random_exps(sorting_objs, ranges, ks)
+    '''
+    #ranges = [int(val) for val in np.geomspace(100,10**6,285)]
+    #ks = [int(val) for val in np.geomspace(4,1000,100)]
+    #run_random_exps(sorting_objs, ranges, ks)
+    traverse_qsort_failure_boundary(100,10**7,5,1000)
 
 

@@ -62,7 +62,7 @@ def plot_contour(res):
     
     gridz = griddata(xy, df['comparisons'], (grid_x, grid_y), method='cubic')
     plt.contourf(grid_x*maxx, grid_y*maxy, gridz, locator = ticker.LogLocator())
-    plt.plot(xy[:,0],xy[:,1], 'k.', ms=1)
+    plt.plot(xy[:,0]*maxx,xy[:,1]*maxy, 'k.', ms=1)
     plt.xticks(rotation=30)
     cbar = plt.colorbar()
     cbar.set_label('Number of comparisons')

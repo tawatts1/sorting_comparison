@@ -84,16 +84,27 @@ def traverse_qsort_failure_boundary(min_N, max_N, min_k, max_k):
             k_factor *= 1.05
     print('was N to large? (if not then k was too large.)')
     print(N_factor < max_N)
+    
+def run_radix(min_N, max_N, min_p, max_p):
+    Ns = list(set([int(val) for val in np.geomspace(min_N,max_N, 50)]))
+    Ns.sort()
+    ks = []
+    for p in range(min_p,max_p):
+        ks.extend([10**p+2,10**p-2])
+        ks.extend([10**p*3, 10**p*5, 10**p*8])
+    ks = [int(val) for val in ks]
+    ks.sort()
+    obj = sorting_obj('radix_sort')
+    for k in ks:
+        print(k)
+        for N in Ns:
+            run_single_exp(obj,N,k)
+    return ks,Ns
 
+    
+    
 if __name__ == '__main__':
-    '''sorting_obj_dict = {name:sorting_obj(name) for name in alg_names}
-    sorting_obj_dict.pop('default_sort')
-    sorting_obj_dict.pop('insertion_sort')
-    sorting_objs = [sorting_obj('quick_sort')]#[sorting_obj_dict[name] for name in sorting_obj_dict.keys()]
-    '''
-    #ranges = [int(val) for val in np.geomspace(100,10**6,285)]
-    #ks = [int(val) for val in np.geomspace(4,1000,100)]
-    #run_random_exps(sorting_objs, ranges, ks)
-    traverse_qsort_failure_boundary(100,10**7,5,1000)
+    ks,Ns = run_radix(10**4,10**6,1,10)
+    
 
 

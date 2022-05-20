@@ -48,7 +48,7 @@ def run_random_exps(sort_objs,length_range, endpoints):
         print(obj.name, k, L)
         run_single_exp(obj,L,k)
         
-def run_single_exp(obj, L, k):
+def run_single_exp(obj, L, k, fname='data/results.csv'):
     lst = get_random_integers(start=0, stop=k, size=L)
     try:
         algorithm_,N_,comparisons_,time_,entry_time_ = (str(val) for val in obj.run_exp(lst))
@@ -62,7 +62,7 @@ def run_single_exp(obj, L, k):
         with open('data/failed_results.csv', 'a') as file:
             file.write(newline + '\n')
     else:
-        with open('data/results.csv', 'a') as file:
+        with open(fname, 'a') as file:
             file.write(newline + '\n')
     return out
 
@@ -86,25 +86,30 @@ def traverse_qsort_failure_boundary(min_N, max_N, min_k, max_k):
     print(N_factor < max_N)
     
 def run_radix(min_N, max_N, min_p, max_p):
-    Ns = list(set([int(val) for val in np.geomspace(min_N,max_N, 50)]))
+    Ns = list(set([int(val) for val in np.linspace(min_N,max_N, 27)]))
     Ns.sort()
     ks = []
     for p in range(min_p,max_p):
-        ks.extend([10**p+2,10**p-2])
+        ks.extend([10**p*.95,10**p*1.05])
         ks.extend([10**p*3, 10**p*5, 10**p*8])
+        ks.extend([10**p*2, 10**p*1.4])
     ks = [int(val) for val in ks]
     ks.sort()
     obj = sorting_obj('radix_sort')
+    jobs = []
     for k in ks:
-        print(k)
         for N in Ns:
-            run_single_exp(obj,N,k)
+            jobs.append((N,k))
+    random.shuffle(jobs)
+    for N,k in jobs:
+        print(N,k)
+        run_single_exp(obj,N,k)
     return ks,Ns
 
     
     
 if __name__ == '__main__':
-    ks,Ns = run_radix(10**4,10**6,1,10)
+    ks,Ns = run_radix(200000,800000,1,10, fname='data/results_radix.csv')
     
 
 

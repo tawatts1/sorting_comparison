@@ -37,7 +37,8 @@ def plot_categories(res,fail):
     plt.ylabel('Sample space length')
     plt.xlabel('List length')
     plt.title('Quick sort failure by list length and\nsample space length')
-    plt.savefig('images/qsort_failure_boundary.png',dpi=300)
+    plt.subplots_adjust(bottom=.2)
+    plt.savefig('images/qsort_failure_boundary.png',dpi=400)
     plt.show() 
 
 def plot_contour(res):
@@ -71,7 +72,9 @@ def plot_contour(res):
     plt.xlabel('List length')
     plt.ylabel('Sample space length')
     plt.title('Quick sort efficiency by list length and\nsample space length')
-    plt.savefig('images/qsort_efficiency_near_failure.png', dpi=300)
+    #plt.gfc().subplots_adjust(bottom=0.14)
+    plt.subplots_adjust(bottom=.2)
+    plt.savefig('images/qsort_efficiency_near_failure.png',dpi=400)
     plt.show()
 
 

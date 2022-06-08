@@ -85,8 +85,8 @@ def traverse_qsort_failure_boundary(min_N, max_N, min_k, max_k):
     print('was N to large? (if not then k was too large.)')
     print(N_factor < max_N)
     
-def run_radix(min_N, max_N, min_p, max_p):
-    Ns = list(set([int(val) for val in np.linspace(min_N,max_N, 27)]))
+def run_radix(min_N, max_N, min_p, max_p, fname):
+    Ns = list(set([int(val) for val in np.linspace(min_N,max_N, 60)]))
     Ns.sort()
     ks = []
     for p in range(min_p,max_p):
@@ -97,19 +97,22 @@ def run_radix(min_N, max_N, min_p, max_p):
     ks.sort()
     obj = sorting_obj('radix_sort')
     jobs = []
-    for k in ks:
-        for N in Ns:
+    for N in Ns:
+        for k in ks:
             jobs.append((N,k))
     random.shuffle(jobs)
-    for N,k in jobs:
-        print(N,k)
-        run_single_exp(obj,N,k)
+    num_jobs = len(jobs)
+    t0 = time.time()
+    for i,(N,k) in enumerate(jobs):
+        run_single_exp(obj,N,k, fname=fname)
+        delta_t = time.time() - t0
+        print(N,k, ( delta_t / (i+1) ) * (num_jobs-i))
     return ks,Ns
 
-    
+ 
     
 if __name__ == '__main__':
-    ks,Ns = run_radix(200000,800000,1,10, fname='data/results_radix.csv')
+    ks,Ns = run_radix(5,800000,1,10, 'data/radix_results.csv')
     
 
 

@@ -75,8 +75,7 @@ def plot_contour(res, key='time', logx = False, logy=False, logcolor=False, cmap
     return ax
     
 
-res = get_results('data/results_radix.csv', 'radix_sort', Nrange=(1,8*10**5), krange=(5,10**10))#, date_from = time.time()-24*3600*2)
-res = res.where(res['time'] < 35000).dropna() # looks like one time lasted all night because of hibernation. 
+res = get_results('data/radix_results.csv', 'radix_sort', Nrange=(1,8*10**5), krange=(5,10**10))#, date_from = time.time()-24*3600*2)
 title = "Radix sort 'comparisons' and runtime\nby list length and sample space size"
 ax1 = plot_contour(res, key='comparisons',logy = True, logx=False, cmap='viridis', plot_location=211, labelbottom=False, title=title)
 plot1 = plot_contour(res, logy = True, logx=False, key = 'time', cmap='plasma', plot_location = 212, sharex=ax1)

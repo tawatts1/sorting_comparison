@@ -109,10 +109,30 @@ def run_radix(min_N, max_N, min_p, max_p, fname):
         print(N,k, ( delta_t / (i+1) ) * (num_jobs-i))
     return ks,Ns
 
+def run_merge(min_N, max_N, min_p, max_p):
+    fname = 'data/merge_results.csv'
+    Ns = list(set([int(val) for val in np.linspace(min_N,max_N, 60)]))
+    Ns.sort()
+    ks = list(set([int(val) for val in np.geomspace(10**min_p,10**max_p,60)]))
+    ks.sort()
+
+    obj = sorting_obj('merge_sort')
+    jobs = []
+    for N in Ns:
+        for k in ks:
+            jobs.append((N,k))
+    random.shuffle(jobs)
+    num_jobs = len(jobs)
+    t0 = time.time()
+    for i,(N,k) in enumerate(jobs):
+        run_single_exp(obj,N,k, fname=fname)
+        delta_t = time.time() - t0
+        print(N,k, ( delta_t / (i+1) ) * (num_jobs-i))
+    return ks,Ns
  
     
 if __name__ == '__main__':
-    ks,Ns = run_radix(5,800000,1,10, 'data/radix_results.csv')
+    ks,Ns = run_merge(5,800000,1,10)
     
 
 
